@@ -5,12 +5,13 @@ import Header from "@/components/auth/Header";
 import { Smile, MessageSquare, Type } from "lucide-react";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const CreatePostPage = () => {
   const router = useRouter();
+  const { data: session } = useSession();
 
   const [formData, setFormData] = useState({
-    username: "",
     thought: "",
     feeling: "",
     content: "",
@@ -24,17 +25,27 @@ const CreatePostPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!session?.user || !session.user.id) {
+      alert("You must be logged in to create a post");
+      return;
+    }
+
     setLoading(true);
     try {
-      const res = await fetch("/api/posts", {
+      const res = await fetch("/api/post", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          userId: session.user.id,
+          username: session.user.name,
+        }),
       });
 
       if (res.ok) {
-        setFormData({ username: "", thought: "", feeling: "", content: "" });
-        router.push("/posts"); // Redirect to /posts
+        setFormData({ thought: "", feeling: "", content: "" });
+        router.push("/posts");
       } else {
         const error = await res.json();
         alert(error.error || "Failed to share post.");
@@ -52,25 +63,18 @@ const CreatePostPage = () => {
         <Header />
       </div>
 
-      <div className="flex-1 pt-16 pb-16 overflow-y-auto" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
+      <div className="flex-1 pt-16 pb-16 overflow-y-auto scroll-hidden">
         <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
+          <div className="w-full max-w-md">
             <div className="text-center mb-8">
               <h2 className="text-2xl font-bold text-gray-800">Create Your Post</h2>
               <p className="text-gray-500 mt-2">Share your thoughts with the community</p>
+              {session?.user?.name && (
+                <p className="text-sm text-gray-600 mt-1">Posting as: {session.user.name}</p>
+              )}
             </div>
 
             <form className="space-y-6" onSubmit={handleSubmit}>
-              <input
-                type="text"
-                name="username"
-                placeholder="Your username"
-                value={formData.username}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              />
-
               <div>
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
                   <MessageSquare className="h-4 w-4 text-blue-500" />
@@ -134,7 +138,11 @@ const CreatePostPage = () => {
       </div>
 
       <style jsx global>{`
-        ::-webkit-scrollbar {
+        .scroll-hidden {
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .scroll-hidden::-webkit-scrollbar {
           display: none;
         }
       `}</style>

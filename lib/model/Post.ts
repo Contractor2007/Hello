@@ -1,12 +1,18 @@
-import mongoose from "mongoose";
+// /lib/model/Post.ts
+import mongoose from 'mongoose';
 
-const postSchema = new mongoose.Schema({
-  username: { type: String, required: true },
-  thought: { type: String },
-  feeling: { type: String },
-  content: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now }
-});
+const PostSchema = new mongoose.Schema(
+  {
+    username: String,
+    userId: String,
+    thought: String,
+    feeling: String,
+    content: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
 
-const Post = mongoose.models.Post || mongoose.model("Post", postSchema);
-export default Post;
+export default mongoose.models.Post || mongoose.model('Post', PostSchema);

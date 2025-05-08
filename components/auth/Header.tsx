@@ -2,7 +2,9 @@
 
 import React, { useState } from 'react';
 import { Menu, AlertTriangle, Flag, MessageSquare, Shield, Settings, X } from 'lucide-react';
+import DarkModeSwitch from "@/components/shared/DarkModeSwitch"
 import Link from 'next/link';
+import UserButton from '../shared/UserButton';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,11 +22,17 @@ const Header = () => {
   ];
 
   return (
-    <div className='fixed top-0 left-0 right-0 p-4 bg-sky-500 text-white z-50'>
+    <div className='fixed top-0 left-0 right-0 p-4 bg-sky-500 dark:bg-blue-700 text-white z-50 transition-colors duration-3000'>
       <div className="flex justify-between items-center max-w-6xl mx-auto">
         <h3 className='font-bold text-lg'>RedFlags</h3>
         
-        <div className="relative">
+        <div className=" flex gap-4 ">
+          <div className="">
+            <DarkModeSwitch />
+          </div>
+          <div className="">
+            <UserButton />
+          </div>
           <button 
             onClick={toggleMenu}
             className="flex items-center gap-1 focus:outline-none"

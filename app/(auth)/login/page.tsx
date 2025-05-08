@@ -1,49 +1,45 @@
 "use client";
-
+import { signIn } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Link from "next/link";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [formData, setFormData] = useState({
-    username: "", // Changed from 'email' to 'username'
-    password: "",
-  });
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
+    setLoading(true);
 
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+      const res = await signIn("credentials", {
+        redirect: false,
+        username,
+        password,
+        callbackUrl: "/posts",
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Login failed");
+      if (res?.error) {
+        setError(res.error === "CredentialsSignin" 
+          ? "Invalid username or password" 
+          : res.error);
+      } else if (res?.url) {
+        router.push(res.url);
       }
-
-      // Login successful - redirect
-      router.push("/posts");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed. Please try again.");
+      setError("An unexpected error occurred");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 mt-10 rounded-lg shadow-md">
+    <div className="max-w-md mx-auto p-6 mt-10 rounded-lg shadow-md bg-white">
       <h1 className="text-3xl font-bold mb-6 text-center">Sign In</h1>
       
       {error && (
@@ -52,21 +48,20 @@ export default function LoginPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleLogin} className="space-y-4">
         <div>
           <label htmlFor="username" className="block text-sm font-medium mb-1">
             Username
           </label>
           <input
-            type="text" // Changed from 'email' to 'text'
+            type="text"
             id="username"
             placeholder="Enter your username"
-            value={formData.username}
-            onChange={(e) =>
-              setFormData({ ...formData, username: e.target.value })
-            }
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             required
+            autoComplete="username"
           />
         </div>
 
@@ -78,13 +73,12 @@ export default function LoginPage() {
             type="password"
             id="password"
             placeholder="••••••••"
-            value={formData.password}
-            onChange={(e) =>
-              setFormData({ ...formData, password: e.target.value })
-            }
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             required
             minLength={6}
+            autoComplete="current-password"
           />
         </div>
 
@@ -108,7 +102,7 @@ export default function LoginPage() {
       </form>
 
       <p className="mt-4 text-center text-sm">
-        Do not have an account?{" "}
+        Don't have an account?{" "}
         <Link href="/register" className="text-blue-600 hover:underline">
           Register
         </Link>

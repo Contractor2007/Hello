@@ -1,21 +1,20 @@
-// app/layout.tsx
-import type { Metadata } from "next";
-import "./globals.css";
+'use client'
 
-export const metadata: Metadata = {
-  title: "Chat Application",
-  description: "A modern chat application",
-};
+import './globals.css';
+import { SessionProvider } from 'next-auth/react';
+import Providers from '@/app/Providers';
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body className="antialiased">
-        {children}
+        <SessionProvider>
+          <Providers>{children}</Providers>
+        </SessionProvider>
       </body>
     </html>
   );
