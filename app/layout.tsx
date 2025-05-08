@@ -1,20 +1,23 @@
-'use client'
+import type { Metadata } from "next";
+import "./globals.css";
+import Providers from "@/app/Providers"
 
-import './globals.css';
-import { SessionProvider } from 'next-auth/react';
-import Providers from '@/app/Providers';
+export const metadata: Metadata = {
+  title: "Chat Application",
+  description: "A modern chat application",
+};
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang="en">
       <body className="antialiased">
-        <SessionProvider>
-          <Providers>{children}</Providers>
-        </SessionProvider>
+        <Providers>
+        {children}
+        </Providers>
       </body>
     </html>
   );
