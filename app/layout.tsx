@@ -1,22 +1,24 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import Providers from "@/app/Providers"
+// app/layout.tsx
+import type { Metadata } from 'next';
+import './globals.css';
+import Providers from './Providers';
+
 
 export const metadata: Metadata = {
-  title: "Chat Application",
-  description: "A modern chat application",
+  title: 'Hello-Chat',
+  description: 'Roy',
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body className="antialiased">
         <Providers>
-        {children}
+          {children}
         </Providers>
       </body>
     </html>

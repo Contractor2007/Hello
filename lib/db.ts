@@ -13,7 +13,7 @@ const connectDB = async () => {
 
   try {
     await mongoose.connect(MONGODB_URI, {
-      dbName: "auth-demo",
+      dbName: "hello-chat",
     });
     isConnected = true;
     console.log("✅ MongoDB connected");

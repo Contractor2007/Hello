@@ -29,7 +29,7 @@ const UserDropdown = () => {
       </Button>
 
       {Open && (
-        <div className="absolute right-0 mt-2 w-48 bg-sky-700 rounded-md shadow-lg z-10 text-white">
+        <div className="absolute right-0 mt-2 w-flex bg-sky-700 rounded-md shadow-lg z-10 text-white">
           <div className="p-3 border-b border-sky-500">
             {session?.user?.name || "Username"}<br />
             {session?.user?.email || "User Description"}

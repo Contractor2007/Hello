@@ -1,66 +1,95 @@
+'use client';
+
 import Footer from "@/components/auth/Footer";
 import Header from "@/components/auth/Header";
-import NoFetch from "@/components/shared/Error";
-import connectDB from "@/lib/db";
-import User from "@/lib/model/schema";
-import { UserType } from "@/lib/types/User";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-const Page = async () => {
-  try {
-    await connectDB();
-    const users = await User.find().lean() as unknown as UserType[];
+type UsersType = {
+  _id: string;
+  username: string;
+  email: string;
+  bio?: string;
+  location?: string;
+  interests?: string[];
+  createdAt: string;
+  updatedAt: string;
+};
 
-    return (
-      <div className="relative h-screen w-full flex flex-col">
-        {/* Fixed Header */}
-        <div className="fixed top-0 left-0 right-0 z-10">
-          <Header />
-        </div>
+const Page = () => {
+  const [users, setUsers] = useState<UsersType[] | null>(null);
+  const [error, setError] = useState(false);
 
-        {/* Scrollable Content Area */}
-        <div
-          className="flex-1 pt-16 pb-16 overflow-y-auto"
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-        >
-          <div className="flex flex-col p-4">
-            <div className="mb-6">
-              <h4 className="text-lg font-semibold">User Directory</h4>
-              <p className="text-gray-600">Browse all registered users</p>
-            </div>
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await fetch("/api/users");
+        const data = await res.json();
+        if (data.success) {
+          setUsers(data.users);
+        } else {
+          setError(true);
+        }
+      } catch (err) {
+        console.error("Error fetching users:", err);
+        setError(true);
+      }
+    };
 
-            {/* Simple username list */}
-            <div className="space-y-2">
-              {users.map((user, index) => (
-                <Link
-                  href={`/users/${user._id}`}
-                  key={user._id?.toString() || index}
-                  className="block p-3 hover:bg-gray-100 rounded transition-colors"
-                >
-                  <span className="font-medium">{user.username || `User ${index + 1}`}</span>
-                </Link>
-              ))}
-            </div>
+    fetchUsers();
+  }, []);
+
+  if (error) return <div className="p-4">Failed to load users.</div>;
+  if (!users) return <div className="p-4">Loading...</div>;
+
+  return (
+    <div className="relative h-screen w-full flex flex-col">
+      {/* Fixed Header */}
+      <div className="fixed top-0 left-0 right-0 z-10">
+        <Header />
+      </div>
+
+      {/* Scrollable Content Area */}
+      <div className="flex-1 pt-16 pb-16 overflow-y-auto scroll-hidden">
+        <div className="flex flex-col p-4 max-w-xl mx-auto">
+          <div className="mb-6">
+            <h4 className="text-lg font-semibold">User Directory</h4>
+            <p className="text-gray-600">Browse all registered users</p>
+          </div>
+
+          <div className="space-y-2">
+            {users.map((user, index) => (
+              <Link
+                href={`/users/${user._id}`}
+                key={user._id || index}
+                className="block p-3 hover:bg-gray-100 rounded transition-colors"
+              >
+                <span className="font-medium">
+                  {user.username || `User ${index + 1}`}
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
-
-        {/* Fixed Footer */}
-        <div className="fixed bottom-0 left-0 right-0 z-10">
-          <Footer />
-        </div>
       </div>
-    );
-  } catch (error) {
-    console.error("❌ Error loading users:", error);
-    return(
-      <div className="">
-        <Header />
-        <NoFetch />
+
+      {/* Fixed Footer */}
+      <div className="fixed bottom-0 left-0 right-0 z-10">
         <Footer />
       </div>
-    );
-  }
+
+      {/* Optional: hide scrollbars */}
+      <style jsx global>{`
+        .scroll-hidden {
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .scroll-hidden::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
+    </div>
+  );
 };
 
 export default Page;

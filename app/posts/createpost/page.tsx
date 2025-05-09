@@ -33,7 +33,7 @@ const CreatePostPage = () => {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/post", {
+      const res = await fetch("/api/Post", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
