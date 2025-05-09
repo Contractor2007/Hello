@@ -12,13 +12,6 @@ const Footer = () => {
           <span>Home</span>
         </Link>
        </div>
-
-       <div className="">
-        <Link href={'/chats'} className="flex flex-col items-center gap-1 text-sm">
-          <MessageSquare className="h-5 w-5" />
-          <span>Chats</span>
-        </Link>
-        </div>
         
         <div className="">
         <Link href={'/posts/createpost'} className="flex flex-col items-center gap-1 text-sm">

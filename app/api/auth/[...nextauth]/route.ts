@@ -9,13 +9,14 @@ export const authOptions = {
   adapter: MongoDBAdapter(clientPromise),
   providers: [
     CredentialsProvider({
-      name:"Credentials",
+      name: "Credentials",
       credentials: {
         username: { label: "Username", type: "text", placeholder: "username" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         try {
+          // Ensure the DB connection is made
           await connectDB();
           
           if (!credentials?.username || !credentials?.password) {
@@ -28,12 +29,14 @@ export const authOptions = {
             throw new Error("No user found with that username");
           }
 
+          // Compare the password
           const isValid = await user.comparePassword(credentials.password);
 
           if (!isValid) {
             throw new Error("Incorrect password");
           }
 
+          // If the user is found and password is valid, return user data
           return {
             id: user._id.toString(),
             name: user.username,
@@ -51,23 +54,23 @@ export const authOptions = {
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   pages: {
-    signIn: "/login",
-    error: "/login",
+    signIn: "/login", // Redirect to your login page on sign-in
+    error: "/login",  // Redirect to your login page on error
   },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
+        token.id = user.id;  // Add user id to the JWT token
       }
       return token;
     },
     async session({ session, token }) {
-      session.user.id = token.id;
+      session.user.id = token.id;  // Add the user id to the session
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === "development",
+  secret: process.env.NEXTAUTH_SECRET, // Secret for JWT encryption
+  debug: process.env.NODE_ENV === "development", // Enable debug logging in dev mode
 };
 
 const handler = NextAuth(authOptions);
