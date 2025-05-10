@@ -34,8 +34,8 @@ export default function PostList() {
     fetchPosts();
   }, []);
 
-  if (error) return <div>Failed to load posts.</div>;
-  if (!posts) return <div>Loading...</div>;
+  if (error) return <div className='flex items-center justify-center '>Failed to load posts.</div>;
+  if (!posts) return <div className='flex items-center justify-center'>Loading...</div>;
 
   return (
     <div className="space-y-4">

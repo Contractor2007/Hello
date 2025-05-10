@@ -1,7 +1,5 @@
 'use client';
 
-import Footer from "@/components/auth/Footer";
-import Header from "@/components/auth/Header";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
@@ -39,15 +37,11 @@ const Page = () => {
     fetchUsers();
   }, []);
 
-  if (error) return <div className="p-4">Failed to load users.</div>;
-  if (!users) return <div className="p-4">Loading...</div>;
+  if (error) return <div className="flex items-center justify-center h-screen">Failed to load users.</div>;
+  if (!users) return <div className="flex items-center justify-center h-screen">Loading...</div>;
 
   return (
     <div className="relative h-screen w-full flex flex-col">
-      {/* Fixed Header */}
-      <div className="fixed top-0 left-0 right-0 z-10">
-        <Header />
-      </div>
 
       {/* Scrollable Content Area */}
       <div className="flex-1 pt-16 pb-16 overflow-y-auto scroll-hidden">
@@ -71,11 +65,6 @@ const Page = () => {
             ))}
           </div>
         </div>
-      </div>
-
-      {/* Fixed Footer */}
-      <div className="fixed bottom-0 left-0 right-0 z-10">
-        <Footer />
       </div>
 
       {/* Optional: hide scrollbars */}

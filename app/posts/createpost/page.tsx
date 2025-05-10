@@ -1,7 +1,5 @@
 'use client';
 
-import Footer from "@/components/auth/Footer";
-import Header from "@/components/auth/Header";
 import { Smile, MessageSquare, Type } from "lucide-react";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -59,9 +57,6 @@ const CreatePostPage = () => {
 
   return (
     <div className="relative h-screen w-full flex flex-col">
-      <div className="fixed top-0 left-0 right-0 z-10 h-16">
-        <Header />
-      </div>
 
       <div className="flex-1 pt-16 pb-16 overflow-y-auto scroll-hidden">
         <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center p-4">
@@ -131,10 +126,6 @@ const CreatePostPage = () => {
             </form>
           </div>
         </div>
-      </div>
-
-      <div className="fixed bottom-0 left-0 right-0 z-10 h-16">
-        <Footer />
       </div>
 
       <style jsx global>{`
